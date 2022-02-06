@@ -31,8 +31,12 @@ namespace Application.Data.Repositories
 
         public async Task<ApplicationResponse> GetRequestResponse(string number)
         {
-            var dto = await _context.Application.Where(o => o.ApplicationNum == number).FirstOrDefaultAsync();
-            var response = _mapper.Map<ApplicationResponse>(dto);
+            var responseDto = await _context.Application
+                .Include(p => p.Applicant)
+                .Include(p => p.RequestedCredit)
+                .Where(p => p.ApplicationNum == number).FirstOrDefaultAsync();
+            
+            var response = _mapper.Map<ApplicationResponse>(responseDto);
             return response;
 
         }

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Application.Data;
 using Application.Data.Repositories;
 using Application.Data.RepositoryInterfaces;
+using Application.Integration.ScoringService;
 using Application.Service.Mapping;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -34,9 +35,9 @@ namespace Application.Service
         public void ConfigureServices(IServiceCollection services)
         {
             var mapperConfig = new MapperConfiguration((v) =>
-           {
+            {
                v.AddProfile(new MappingProfile());
-           });
+            });
 
            IMapper mapper = mapperConfig.CreateMapper();
            services.AddSingleton(mapper);
@@ -44,6 +45,7 @@ namespace Application.Service
             services.AddControllers();
 
             services.AddSingleton<IApplicationRepository, ApplicationRepository>();
+            services.AddSingleton<IScoringService, ScoringService>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);

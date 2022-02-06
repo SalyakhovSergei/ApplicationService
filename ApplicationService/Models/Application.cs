@@ -14,8 +14,9 @@ namespace Application.Service.Models
         public int CreditManagerId { get; set; }
         public Applicant Applicant { get; set; }
         public RequestedCredit RequestedCredit { get; set; }
-        [DefaultValue(false)]
+        [DefaultValue(false)] 
         public bool ScoringStatus { get; set; }
+        [DefaultValue(null)] 
         public DateTime ScoringDate { get; set; }
 
     }
