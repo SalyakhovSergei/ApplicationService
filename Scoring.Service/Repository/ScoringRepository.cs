@@ -12,7 +12,6 @@ namespace Scoring.Service.Repository
             int score = random.Next(1, 10);
 
             return new Response { scoringStatus = score < 5};
-
         }
 
         public async Task<Response> EvaluateAsync()
