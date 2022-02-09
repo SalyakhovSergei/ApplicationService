@@ -9,20 +9,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using Application.Data;
-using Application.Data.Repositories;
-using Application.Data.RepositoryInterfaces;
-using Application.Integration.ScoringService;
-using Application.Service.Mapping;
-using Application.Service.Models;
-using AutoMapper;
-using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Scoring.Service.Repository;
 
-namespace Application.Service
+namespace Scoring.Service
 {
     public class Startup
     {
@@ -36,29 +27,16 @@ namespace Application.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var mapperConfig = new MapperConfiguration((v) =>
-            {
-               v.AddProfile(new MappingProfile());
-            });
-
-           IMapper mapper = mapperConfig.CreateMapper();
-           services.AddSingleton(mapper);
-
             services.AddControllers();
 
-            services.AddSingleton<IApplicationRepository, ApplicationRepository>();
-            services.AddSingleton<IScoringService, ScoringService>();
-
-            string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
+            services.AddSingleton<IScoringRepository, ScoringRepository>();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApplicationService", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Scoring.Service", Version = "v1" });
             });
 
-            services.AddFluentValidation(fv => 
-                fv.RegisterValidatorsFromAssemblyContaining<ApplicationQuery>());
+            services.AddOptions();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,9 +48,8 @@ namespace Application.Service
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApplicationService v1");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Scoring.Service v1");
                 });
-
             }
 
             app.UseHttpsRedirection();
@@ -85,8 +62,6 @@ namespace Application.Service
             {
                 endpoints.MapControllers();
             });
-            
-
         }
     }
 }

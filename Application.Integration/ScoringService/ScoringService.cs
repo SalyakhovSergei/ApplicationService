@@ -1,32 +1,37 @@
 ﻿using System.Net;
 using System.IO;
+using System.Threading.Tasks;
+using NLog;
 
 
 namespace Application.Integration.ScoringService
 {
     public class ScoringService: IScoringService
     {
-        private const string evaluationQuery = "https://localhost:5005/Scoring/getNonEvaluatedApps";
+        readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private const string evaluationQuery = "https://localhost:44307/Scoring/evaluate";
 
-		private string GetJson(WebResponse response)
+		private string GetJson(Task<WebResponse> response)
         {
+            logger.Info("Отправлен запрос в сервис оценки");
             string answer = string.Empty;
-            using (Stream stream = response.GetResponseStream())
+            using (Stream stream = response.Result.GetResponseStream())
             {
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     answer = reader.ReadToEnd();
                 }
             }
-            response.Close();
+            response.Result.Close();
             return answer;
         }
 
-        private WebResponse GetResponse(string link)
+        private async Task<WebResponse> GetResponse(string link)
         {
+            
             WebRequest request = WebRequest.Create(link);
-            request.Method = "Get";
-            return request.GetResponse();
+            request.Method = "Post";
+            return await request.GetResponseAsync();
         }
         
         public string Evaluate()

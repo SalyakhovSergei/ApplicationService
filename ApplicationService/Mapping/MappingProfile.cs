@@ -10,7 +10,7 @@ namespace Application.Service.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Models.Application, ApplicationDTO>().ReverseMap();
+            CreateMap<Models.ApplicationQuery, ApplicationDTO>().ReverseMap();
 
             CreateMap<Applicant, ApplicantDTO>().ReverseMap();
             CreateMap<RequestedCredit, RequestedCreditDTO>().ReverseMap();
