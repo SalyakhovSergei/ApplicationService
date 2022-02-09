@@ -36,14 +36,6 @@ namespace Application.Service.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateApplication([FromBody] ApplicationQuery applicationQuery)
         {
-            if (applicationQuery.Applicant == null)
-            {
-                return StatusCode(400, "Ошибка: Укажите клиента");
-            }
-            if (applicationQuery.RequestedCredit == null)
-            {
-                return StatusCode(400, "Ошибка: Нет информации о заявке на кредит");
-            }
             try
             {
                 var app = _mapper.Map<ApplicationDTO>(applicationQuery);
@@ -55,6 +47,7 @@ namespace Application.Service.Controllers
             catch (WebException e)
             {
                 _logger.Error(e.Message);
+                throw;
             }
             
             return Ok();

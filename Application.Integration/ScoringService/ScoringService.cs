@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.IO;
 using System.Threading.Tasks;
 using NLog;
@@ -28,10 +29,22 @@ namespace Application.Integration.ScoringService
 
         private async Task<WebResponse> GetResponse(string link)
         {
-            
-            WebRequest request = WebRequest.Create(link);
-            request.Method = "Post";
-            return await request.GetResponseAsync();
+            try
+            {
+                WebRequest request = WebRequest.Create(link);
+                request.Method = "Post";
+                return await request.GetResponseAsync();
+            }
+            catch (WebException e)
+            {
+                logger.Error(e.Message);
+                throw;
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+                throw;
+            }
         }
         
         public string Evaluate()
