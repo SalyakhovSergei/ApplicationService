@@ -32,6 +32,7 @@ namespace Application.Service.Controllers
             _scoringService = scoringService;
         }
 
+        //main method that accept info from external source and send query to scoring and put data in database
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateApplication([FromBody] ApplicationQuery applicationQuery)
@@ -52,7 +53,7 @@ namespace Application.Service.Controllers
             
             return Ok();
         }
-
+        //returns answer about application
         [HttpGet]
         [Route("status/{appnumber}")]
         public async Task<IActionResult> GetRequestResponse(string appnumber)
