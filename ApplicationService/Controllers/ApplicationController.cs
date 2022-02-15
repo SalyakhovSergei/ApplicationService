@@ -44,6 +44,7 @@ namespace Application.Service.Controllers
                 GetResponse(app);
                 await _applicationRepository.Create(app);
                 _logger.Info($"Заявка {app.ApplicationNum} принята");
+                _logger.Info($"Заявка {app.ApplicationNum} принята");
             }
             catch (WebException e)
             {
