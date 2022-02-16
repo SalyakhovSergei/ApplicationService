@@ -24,7 +24,7 @@ namespace Scoring.Service.RabbitMQ
                     exclusive: false,
                     autoDelete: false,
                     arguments: null);
-
+                Console.WriteLine(body);
                 var message = Encoding.UTF8.GetBytes(body);
 
                 channel.BasicPublish(exchange: "",

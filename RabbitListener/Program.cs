@@ -3,22 +3,17 @@ using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Scoring.Service.RabbitMQ
+namespace RabbitListener
 {
-    public class Consumer: IConsumer
+    class Program
     {
-        private const string _hostName = "localhost";
-        private const string _queueName = "scoring";
-
-        public string GetMessageFromQueue()
+        static void Main(string[] args)
         {
-            string message = "";
-
-            var factory = new ConnectionFactory() { HostName = _hostName };
+            var factory = new ConnectionFactory() { HostName = "localhost" };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.QueueDeclare(queue: _queueName,
+                channel.QueueDeclare(queue: "scoring",
                     durable: false,
                     exclusive: false,
                     autoDelete: false,
@@ -32,15 +27,14 @@ namespace Scoring.Service.RabbitMQ
                     var body = e.Body.ToArray();
                     var messageFromQueue = Encoding.UTF8.GetString(body);
                     Console.WriteLine(messageFromQueue);
-                    message = messageFromQueue;
                 };
 
-                channel.BasicConsume(queue: _queueName,
+                channel.BasicConsume(queue: "scoring",
                     autoAck: true,
                     consumer: consumer);
             }
 
-            return message;
+            Console.ReadLine();
         }
     }
 }

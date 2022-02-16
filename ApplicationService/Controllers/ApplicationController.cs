@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Data.DataObjects;
 using Application.Data.RepositoryInterfaces;
@@ -12,7 +13,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
-using RabbitMQLibrary;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Application.Service.Controllers
@@ -21,28 +21,24 @@ namespace Application.Service.Controllers
     [Route("[controller]")]
     public class ApplicationController : ControllerBase
     {
+        private const int timeToWaitQueue = 10000;
+
         private IApplicationRepository _applicationRepository;
-        private IScoringService _scoringService;
         private IPublisher _publisher;
         private IConsumer _consumer;
-        private IScoringConsumer _scoringConsumer;
 
         private IMapper _mapper;
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public ApplicationController(IApplicationRepository applicationRepository,
-            IMapper mapper,
-            IScoringService scoringService, 
+            IMapper mapper, 
             IPublisher publisher, 
-            IConsumer consumer, 
-            IScoringConsumer scoringConsumer)
+            IConsumer consumer)
         {
             _applicationRepository = applicationRepository;
             _mapper = mapper;
-            _scoringService = scoringService;
             _publisher = publisher;
             _consumer = consumer;
-            _scoringConsumer = scoringConsumer;
         }
 
         //main method that accept info from external source and send query to scoring and put data in database
@@ -56,8 +52,7 @@ namespace Application.Service.Controllers
                 
                 var app = _mapper.Map<ApplicationDTO>(applicationQuery);
 
-                await Task.Delay(1000);
-                GetResponse(app);
+                await GetResponse(app);
 
                 await _applicationRepository.Create(app);
                 _logger.Info($"Заявка {app.ApplicationNum} принята");
@@ -102,14 +97,13 @@ namespace Application.Service.Controllers
         }
 
         [HttpGet]
-        private async void GetResponse(ApplicationDTO applicationDto)
+        private async Task GetResponse(ApplicationDTO applicationDto)
         {
             await Task.Run(() =>
             {
                 try
                 {
-                    _scoringConsumer.CallScoring();
-                    Task.Delay(1000);
+                    Thread.Sleep(timeToWaitQueue);
                     var answer = _consumer.GetMessageFromQueue();
                     var scoringResult = JsonConvert.DeserializeObject<ScoringResponse>(answer);
                     applicationDto.ScoringStatus = scoringResult?.ScoringStatus;

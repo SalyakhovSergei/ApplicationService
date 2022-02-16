@@ -15,15 +15,13 @@ namespace Scoring.Service.Controllers
     {
         private IScoringRepository _scoringRepository;
         private IPublisher _publisher;
-        private IConsumer _consumer;
         readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 
-        public ScoringController(IScoringRepository scoringRepository, IPublisher publisher, IConsumer consumer)
+        public ScoringController(IScoringRepository scoringRepository, IPublisher publisher)
         {
             _scoringRepository = scoringRepository;
             _publisher = publisher;
-            _consumer = consumer;
         }
 
         [HttpPost]
@@ -31,9 +29,8 @@ namespace Scoring.Service.Controllers
         public async Task<IActionResult> Evaluate() => 
             await Task.Run(() =>
             {
-                _consumer.GetMessageFromQueue();
+                
                 var response = _scoringRepository.EvaluateAsync();
-                Task.Delay(500);
                 _publisher.PublishToQueue(response.Result);
 
                 return Ok(response.Result);

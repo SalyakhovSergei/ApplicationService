@@ -31,7 +31,6 @@ namespace Application.Service.RabbitMQ
                 {
                     var body = e.Body.ToArray();
                     var messageFromQueue = Encoding.UTF8.GetString(body);
-                    Console.WriteLine(messageFromQueue);
                     message = messageFromQueue;
                 };
 

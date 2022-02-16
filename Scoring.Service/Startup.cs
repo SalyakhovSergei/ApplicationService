@@ -32,7 +32,6 @@ namespace Scoring.Service
 
             services.AddSingleton<IScoringRepository, ScoringRepository>();
             services.AddSingleton<IPublisher, Publisher>();
-            services.AddSingleton<IConsumer, Consumer>();
 
             services.AddSwaggerGen(c =>
             {
