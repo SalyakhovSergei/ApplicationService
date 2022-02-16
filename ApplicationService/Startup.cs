@@ -17,10 +17,12 @@ using Application.Data.RepositoryInterfaces;
 using Application.Integration.ScoringService;
 using Application.Service.Mapping;
 using Application.Service.Models;
+using Application.Service.RabbitMQ;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RabbitMQLibrary;
 
 namespace Application.Service
 {
@@ -48,6 +50,9 @@ namespace Application.Service
 
             services.AddSingleton<IApplicationRepository, ApplicationRepository>();
             services.AddSingleton<IScoringService, ScoringService>();
+            services.AddSingleton<IPublisher, Publisher>();
+            services.AddSingleton<IConsumer, Consumer>();
+            services.AddSingleton<IScoringConsumer, ScoringConsumer>();
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);

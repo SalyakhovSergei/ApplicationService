@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Net;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
-using NLog;
 
-
-namespace Application.Integration.ScoringService
+namespace RabbitMQLibrary
 {
-    public class ScoringService: IScoringService
+    public class ScoringIntegration
     {
-        readonly Logger logger = LogManager.GetCurrentClassLogger();
         private const string evaluationQuery = "https://localhost:5005/Scoring/evaluate";
 
-		private string GetJson(Task<WebResponse> response)
+        private string GetJson(Task<WebResponse> response)
         {
-            logger.Info("Отправлен запрос в сервис оценки");
             string answer = string.Empty;
             using (Stream stream = response.Result.GetResponseStream())
             {
@@ -37,16 +33,14 @@ namespace Application.Integration.ScoringService
             }
             catch (WebException e)
             {
-                logger.Error(e.Message);
                 throw;
             }
             catch (Exception e)
             {
-                logger.Error(e.Message);
                 throw;
             }
         }
-        
+
         public string Evaluate()
         {
             return GetJson(GetResponse(evaluationQuery));

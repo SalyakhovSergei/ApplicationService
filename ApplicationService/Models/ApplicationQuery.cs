@@ -9,25 +9,25 @@ namespace Application.Service.Models
     {
         
         public int Id { get; set; }
-        [JsonProperty("ApplicationNum")]
+        [JsonProperty("applicationNum")]
         public string ApplicationNum { get; set; }
 
-        [JsonProperty("ApplicationDate")]
+        [JsonProperty("applicationDate")]
         public DateTime ApplicationDate { get; set; }
 
-        [JsonProperty("BranchBank")]
+        [JsonProperty("branchBank")]
         public string BranchBank { get; set; }
 
-        [JsonProperty("BranchBankAddress")]
+        [JsonProperty("branchBankAddress")]
         public string BranchBankAddress { get; set; }
 
-        [JsonProperty("CreditManagerId")]
+        [JsonProperty("creditManagerId")]
         public int CreditManagerId { get; set; }
 
-        [JsonProperty("Applicant")]
+        [JsonProperty("applicant")]
         public Applicant Applicant { get; set; }
 
-        [JsonProperty("RequestedCredit")]
+        [JsonProperty("requestedCredit")]
         public RequestedCredit RequestedCredit { get; set; }
         
 

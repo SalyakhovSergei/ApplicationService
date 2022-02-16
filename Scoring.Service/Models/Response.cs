@@ -1,7 +1,10 @@
-﻿namespace Scoring.Service.Models
+﻿using Newtonsoft.Json;
+
+namespace Scoring.Service.Models
 {
     public class Response
     {
-        public bool scoringStatus { get; set; }
+        [JsonProperty("scoringStatus")]
+        public bool ScoringStatus { get; set; }
     }
 }

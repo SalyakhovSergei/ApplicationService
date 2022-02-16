@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
+using Scoring.Service.RabbitMQ;
 using Scoring.Service.Repository;
 
 namespace Scoring.Service
@@ -30,6 +31,8 @@ namespace Scoring.Service
             services.AddControllers();
 
             services.AddSingleton<IScoringRepository, ScoringRepository>();
+            services.AddSingleton<IPublisher, Publisher>();
+            services.AddSingleton<IConsumer, Consumer>();
 
             services.AddSwaggerGen(c =>
             {

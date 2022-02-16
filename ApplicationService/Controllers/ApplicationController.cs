@@ -7,10 +7,13 @@ using Application.Data.RepositoryInterfaces;
 using Application.Data.ResponseData;
 using Application.Integration.ScoringService;
 using Application.Service.Models;
+using Application.Service.RabbitMQ;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
+using RabbitMQLibrary;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace Application.Service.Controllers
 {
@@ -20,16 +23,26 @@ namespace Application.Service.Controllers
     {
         private IApplicationRepository _applicationRepository;
         private IScoringService _scoringService;
+        private IPublisher _publisher;
+        private IConsumer _consumer;
+        private IScoringConsumer _scoringConsumer;
+
         private IMapper _mapper;
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public ApplicationController(IApplicationRepository applicationRepository,
             IMapper mapper,
-            IScoringService scoringService)
+            IScoringService scoringService, 
+            IPublisher publisher, 
+            IConsumer consumer, 
+            IScoringConsumer scoringConsumer)
         {
             _applicationRepository = applicationRepository;
             _mapper = mapper;
             _scoringService = scoringService;
+            _publisher = publisher;
+            _consumer = consumer;
+            _scoringConsumer = scoringConsumer;
         }
 
         //main method that accept info from external source and send query to scoring and put data in database
@@ -39,11 +52,14 @@ namespace Application.Service.Controllers
         {
             try
             {
+                _publisher.PublishToQueue(applicationQuery);
+                
                 var app = _mapper.Map<ApplicationDTO>(applicationQuery);
 
+                await Task.Delay(1000);
                 GetResponse(app);
+
                 await _applicationRepository.Create(app);
-                _logger.Info($"Заявка {app.ApplicationNum} принята");
                 _logger.Info($"Заявка {app.ApplicationNum} принята");
             }
             catch (WebException e)
@@ -54,6 +70,7 @@ namespace Application.Service.Controllers
             
             return Ok();
         }
+
         //returns answer about application
         [HttpGet]
         [Route("status/{appnumber}")]
@@ -91,9 +108,11 @@ namespace Application.Service.Controllers
             {
                 try
                 {
-                    var scoringResponse = _scoringService.Evaluate();
-                    var scoringResult = JsonConvert.DeserializeObject<ScoringResponse>(scoringResponse);
-                    applicationDto.ScoringStatus = scoringResult is { ScoringStatus: true };
+                    _scoringConsumer.CallScoring();
+                    Task.Delay(1000);
+                    var answer = _consumer.GetMessageFromQueue();
+                    var scoringResult = JsonConvert.DeserializeObject<ScoringResponse>(answer);
+                    applicationDto.ScoringStatus = scoringResult?.ScoringStatus;
                     applicationDto.ScoringDate = DateTime.Now;
                     _logger.Info("Получен ответ по заявке");
                 }

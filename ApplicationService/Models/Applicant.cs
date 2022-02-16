@@ -7,34 +7,34 @@ namespace Application.Service.Models
     {
         public int Id { get; set; }
 
-        [JsonProperty("FirstName")]
+        [JsonProperty("firstName")]
         public string FirstName { get; set; }
 
-        [JsonProperty("MiddleName")]
+        [JsonProperty("middleName")]
         public string MiddleName { get; set; }
 
-        [JsonProperty("LastName")]
+        [JsonProperty("lastName")]
         public string LastName { get; set; }
 
-        [JsonProperty("DateBirth")]
+        [JsonProperty("dateBirth")]
         public DateTime DateBirth { get; set; }
 
-        [JsonProperty("CityBirth")]
+        [JsonProperty("cityBirth")]
         public string CityBirth { get; set; }
 
-        [JsonProperty("AddressBirth")]
+        [JsonProperty("addressBirth")]
         public string AddressBirth { get; set; }
 
-        [JsonProperty("AddressCurrent")]
+        [JsonProperty("addressCurrent")]
         public string AddressCurrent { get; set; }
 
-        [JsonProperty("INN")]
+        [JsonProperty("inn")]
         public int INN { get; set; }
 
-        [JsonProperty("SNILS")]
+        [JsonProperty("snils")]
         public string SNILS { get; set; }
 
-        [JsonProperty("PassportNum")]
+        [JsonProperty("passportNum")]
         public string PassportNum { get; set; }
 
     }

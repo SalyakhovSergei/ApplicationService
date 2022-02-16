@@ -7,25 +7,25 @@ namespace Application.Service.Models
     {
         public int Id { get; set; }
 
-        [JsonProperty("CreditType")]
+        [JsonProperty("creditType")]
         public int CreditType { get; set; }
 
-        [JsonProperty("RequestedAmount")]
+        [JsonProperty("requestedAmount")]
         public double RequestedAmount { get; set; }
 
-        [JsonProperty("RequestedCurrency")]
+        [JsonProperty("requestedCurrency")]
         public string RequestedCurrency { get; set; }
 
-        [JsonProperty("AnnualSalary")]
+        [JsonProperty("annualSalary")]
         public double AnnualSalary { get; set; }
 
-        [JsonProperty("MonthSalary")]
+        [JsonProperty("monthSalary")]
         public double MonthSalary { get; set; }
 
-        [JsonProperty("CompanyName")]
+        [JsonProperty("companyName")]
         public string CompanyName { get; set; }
 
-        [JsonProperty("Comment")]
+        [JsonProperty("comment")]
         public string Comment { get; set; }
     }
 }
